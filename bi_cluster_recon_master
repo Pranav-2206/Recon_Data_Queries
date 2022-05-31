@@ -1,0 +1,21 @@
+create table payments_recon_bi_cluster.recon_master_mis_april_2022 as (
+Select
+    reference_id_internal_mapping as mis_id ,
+    category as mis_type,
+    table_name as mis_source, 
+    case when category like 'Loading' then 'C' when category in ('Fulfillment','Settlement','disbursal') then 'D' else 'UNKNOWN' end as txn_type, 
+    status as status,
+    reference_id_internal_mapping as txn_id ,
+    net_mount as txn_amount,
+    dt as txn_time,
+    commission as gateway_charges,
+    gst as gst,
+    (net_mount+COALESCE(gst,0)+COALESCE(gateway_charges,0)) as gross_txn_amount,
+    Refund_Column as Refund_column,
+    reference_id_statement_mapping as statement_ref_id,
+    0 as attemmpt_data_found,
+    dt as created_at,
+    dt as updated_at,
+    0 as version
+from payments_recon_bi_cluster.mis_master_april  WHERE  txn_time >= '2022-03-29'
+)
