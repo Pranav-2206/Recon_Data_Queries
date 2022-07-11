@@ -1,0 +1,45 @@
+ALTER TABLE payments_recon_bi_cluster.recon_mis_master
+ALTER COLUMN currency TYPE character varying(32);
+
+
+ALTER TABLE payments_recon_bi_cluster.recon_mis_master
+ALTER COLUMN mis_source TYPE character varying(512);
+
+
+
+insert into payments_recon_bi_cluster.recon_mis_master 
+(mis_id,mis_type,mis_source,txn_type,status,txn_id,gross_txn_amount,txn_time,gateway_charges,gst,net_txn_amount,net_transaction_amount,record_tag,statement_ref_id,link,attemmpt_data_found,created_at,updated_at,version,statement_source,currency,exception_remarks)
+select attempt_id,attempt_type, concat('rs__genie__genie.settlement_attempt_',payment_gateway), 'D', status, attempt_id, amount, attempt_time,0,0,amount,amount,'ATTEMPT_REPLICA',mis_ref_id_gate,mis_ref_id_gate,false, CURRENT_DATE AS "created_at", CURRENT_DATE AS "updated_at", 0, mapping_source, currency,exception_remarks from payments_recon_bi_cluster.order_attempts_settlement_april_new where attempt_time <= '2022-04-30' and report_type='STATEMENT';
+--MIS loading from main attempt order april for intenral bank transfer
+insert into payments_recon_bi_cluster.recon_mis_master 
+(mis_id,mis_type,mis_source,txn_type,status,txn_id,gross_txn_amount,txn_time,gateway_charges,gst,net_txn_amount,net_transaction_amount,record_tag,statement_ref_id,link,attemmpt_data_found,created_at,updated_at,version,statement_source,currency,exception_remarks)
+select attempt_id,attempt_type, concat('rs__genie__genie.settlement_attempt_',payment_gateway), 'C', status, attempt_id, amount, attempt_time,0,0,amount,amount,'INTERNAL_BANK_TRANSFER',mis_ref_id_gate,bank_account_number,false, CURRENT_DATE AS "created_at", CURRENT_DATE AS "updated_at", 0, mapping_source, currency,exception_remarks from payments_recon_bi_cluster.order_attempts_settlement_april_new where attempt_time <= '2022-04-30' and report_type='STATEMENT' and lob_sub_type in ('FUND_TRANSFER','fundtransfer') ; -- link is bank account number
+
+
+
+
+
+
+
+
+insert into payments_recon_bi_cluster.recon_mis_master 
+(mis_id,mis_type,mis_source,txn_type,status,txn_id,gross_txn_amount,txn_time,gateway_charges,gst,net_txn_amount,net_transaction_amount,record_tag,statement_ref_id,link,attemmpt_data_found,created_at,updated_at,version,statement_source,currency,exception_remarks)
+
+select attempt_id,attempt_type, concat('rs__genie__genie.settlement_attempt_',payment_gateway), 'C', status, attempt_id, amount, attempt_time,0,0,amount,amount,'INVALID_TXN_CREDIT_REVERSAL',mis_ref_id_gate,bank_account_number,false, CURRENT_DATE AS "created_at", CURRENT_DATE AS "updated_at", 0, mapping_source, currency,exception_remarks from payments_recon_bi_cluster.order_attempts_settlement_april_new where report_type='STATEMENT' and attempt_id in (
+select a.id from payments_recon_bi_cluster.recon_bank_statement_master s inner join rs__genie__genie.settlement_attempt a on s.mis_ref_no=a.utr where s.statement_source ='yesbank_statement_0802' and s.narration like '%/Invalid Txn Detail' and s.txn_type='C'
+) ;
+
+UPDATE payments_recon_bi_cluster.recon_mis_master SET statement_ref_id = a.utr 
+from payments_recon_bi_cluster.recon_mis_master m INNER JOIN rs__genie__genie.settlement_attempt a  ON  m.mis_id=a.id 
+where m.mis_type='SETTLEMENT' and m.record_tag='INVALID_TXN_CREDIT_REVERSAL' ;
+
+
+update payments_recon_bi_cluster.recon_mis_master set statement_ref_id=date(statement_ref_id)::varchar where mis_source='rbl_visa_payout__v4' ;
+  update payments_recon_bi_cluster.recon_mis_master set statement_source='rbl_statement_5640' where mis_source='rbl_visa_payout__v4' ;
+  update payments_recon_bi_cluster.recon_mis_master set statement_ref_id=date(statement_ref_id)::varchar where mis_source='rbl_mastersend_payout__v4' ;
+  update payments_recon_bi_cluster.recon_mis_master set statement_source='rbl_statement_5794' where mis_source='rbl_mastersend_payout__v4' ;
+  update payments_recon_bi_cluster.recon_mis_master set statement_source='kotak_statement_9001' where mis_source='kotak_visadirect__v2' ;
+  update payments_recon_bi_cluster.recon_mis_master set statement_source='kotak_statement_9002' where mis_source='kotak_mastersend_payout' ;
+ 
+ 
+ grant all on payments_recon_bi_cluster.recon_mis_master to public;
