@@ -1,0 +1,166 @@
+alter table payments_recon_bi_cluster.recon_mis_master
+add column statement_source varchar 
+default 'NA';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='axis_statement_0172__v2'where mis_source='axisupi_settlement__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='axis_statement_7853'where mis_source='bbps_cybersource';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.hdfc_statement_8533'where mis_source='bbps_razorpay';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.icici_statement'where mis_source='billdesk_settlement__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.yesbank_statement'where mis_source='cashfree_pg__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='axis_statement_7853'where mis_source='checkout_cybersource__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='hdfc_pg_bbps';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='hdfc_pg_ccbp';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='hdfc_pg_rent';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='icici_statement__v3'where mis_source='icici_pg__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='icici_upi_bulk__v3'where mis_source='icici_upi_pg__v3';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.icici_statement'where mis_source='payu_bbps';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.icici_statement'where mis_source='payu_bbps_loading__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.icici_statement'where mis_source='payu_settlement__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='razorpay_settlement__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='razorpay_settlement__v3';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='axis_statement__v2'where mis_source='rent_axisupi__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='axis_statement__v2'where mis_source='rent_cybersource__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='icici_statement__v3'where mis_source='rent_iciciupi__v3';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.yesbank_statement'where mis_source='rent_payu__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='rent_pinelabs__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='rent_razorpay__v3';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='yesbank_statement__v2'where mis_source='rent_stash_tpsl_pg__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.yesbank_statement'where mis_source='rent_store_stash_cashfreepg';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='payments_recon.yesbank_statement'where mis_source='tpsl_pg__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='yesbank_statement_0802'where mis_source='yesbank_mis_0802';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='yesbank_statement_9470__v3'where mis_source='yesbank_mis_9470__v2';
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='yesbank_statement__v2'where mis_source='yesbank_upi__v2';
+
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where status in ('COMPLETED','completed','SUCCESS','success','Success','C');
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='failed'
+where status in ('FAILED','failed','Failed','FAILURE','Failure');
+
+update payments_recon_bi_cluster.recon_mis_master 
+set record_tag='refund'
+where record_tag in ('Refund',
+'refund', 'REFUND');
+
+update payments_recon_bi_cluster.recon_mis_master 
+set record_tag='non-refund'
+where record_tag is null;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('bbps_cybersource',
+'bbps_cybersource',
+'bbps_razorpay',
+'bbps_razorpay');
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('billdesk_settlement__v2') and status='Refund';
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('cashfree_pg__v2') ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('checkout_cybersource__v2',
+'checkout_cybersource__v2',
+'hdfc_pg_bbps',
+'hdfc_pg_ccbp',
+'hdfc_pg_rent_temp') ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('kotak_visadirect__v2',
+'ksf_cred_mis__v2',
+'ksf_disbursal_mis__v2',
+'liquiloans_cred_mis__v2',
+'mint_liquiloans__v3',
+'mint_razorpay',
+'mint_razorpay') ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('rent_cybersource__v2',
+'rent_cybersource__v2',
+'rent_pinelabs__v2',
+'rent_pinelabs__v2',
+'rent_stash_tpsl_pg__v2',
+'rent_store_stash_cashfreepg',
+'stash_idfc_mis__v2',
+'stash_liquiloans__v2',
+'tpsl_pg__v2',
+'tpsl_pg_refund__v3') ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('rbl_visa_payout__v2') ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('refunds_axisupi_01__v3') and status='Refund accepted successfully' ;
+
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('yesbank_mis_9470__v2','yesbank_mis_0802','yesbank_upi__v2') and status='TIMEOUT' ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='failed'
+where mis_source in  ('cf_imps_new_01_reversals__v2') and status='REVERSED' ;
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source in  ('payu_bbps') and status='paid' ;
+
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='failed'
+where mis_source in  ('payu_bbps') and status='payment_request_failed' ;
+update payments_recon_bi_cluster.recon_mis_master 
+set status='processing'
+where mis_source in  ('refunds_iciciupi__v3') and status in ('DEEMED','INITIATED' );
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='processing'
+where mis_source in  ('yesbank_mis_9470__v2') and status in ('PENDING' );
+
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='processing'
+where mis_source in  ('payu_bbps') and status in ('payment_request_pending' );
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='processing'
+where mis_source in  ('rent_axisupi__v2') and status in ('DEEMED' );
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where  status in ('COMPLETED' );
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='failed'
+where  status in ('FORCE_FAILED' );
+
+update payments_recon_bi_cluster.recon_mis_master 
+set status='completed'
+where mis_source='ksf_cancellation_mis' and  status is null ;
+
+update payments_recon_bi_cluster.recon_mis_master  set statement_source='hdfc_statement_8533__v2'where mis_source='hdfc_pg_rent_temp';
+
+update payments_recon_bi_cluster.recon_mis_master set net_transaction_amount = net_transaction_amount * -1 where mis_source = 'payu_settlement__v2' and record_tag = 'refund';
+
+update payments_recon_bi_cluster.recon_mis_master set net_transaction_amount = net_transaction_amount * -1 where mis_source = 'pinelabs_loading__v2' and record_tag = 'refund';
+
+update payments_recon_bi_cluster.recon_mis_master set net_transaction_amount = net_transaction_amount * -1 where mis_source = 'refunds_axisupi__v3' and filename like ('%CRED CLUB REFUND%');
+
+
+
+
+
+
+
+
+
